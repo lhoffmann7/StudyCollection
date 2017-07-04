@@ -1,0 +1,60 @@
+--fertig
+create or replace trigger updCoun
+after   update of code
+	on country
+	for each row
+begin
+	update city set country=:NEW.code where country=:OLD.code;
+	update province set country=:NEW.code where country=:OLD.code;
+	update economy set country=:NEW.code where country=:OLD.code;
+	update population set country=:NEW.code where country=:OLD.code;
+	update politics set country=:NEW.code where country=:OLD.code;
+	update language set country=:NEW.code where country=:OLD.code;
+	update religion set country=:NEW.code where country=:OLD.code;
+	update countrypops set country=:NEW.code where country=:OLD.code;
+	update ethnicgroup set country=:NEW.code where country=:OLD.code;
+	update provpops set country=:NEW.code where country=:OLD.code;
+	update citypops set country=:NEW.code where country=:OLD.code;
+	update borders set country1=:NEW.code where country1=:OLD.code;
+	update borders set country2=:NEW.code where country2=:OLD.code;
+	update encompasses set country=:NEW.code where country=:OLD.code;
+	update organization set country=:NEW.code where country=:OLD.code;
+	update ismember set country=:NEW.code where country=:OLD.code;
+	update geo_mountain set country=:NEW.code where country=:OLD.code;
+	update geo_desert set country=:NEW.code where country=:OLD.code;
+	update geo_sea set country=:NEW.code where country=:OLD.code;
+	update geo_lake set country=:NEW.code where country=:OLD.code;
+	update geo_river set country=:NEW.code where country=:OLD.code;
+	update geo_island set country=:NEW.code where country=:OLD.code;
+	update geo_source set country=:NEW.code where country=:OLD.code;
+	update geo_estuary set country=:NEW.code where country=:OLD.code;
+	update located set country=:NEW.code where country=:OLD.code;
+	update locatedon set country=:NEW.code where country=:OLD.code;
+	update airport set country=:NEW.code where country=:OLD.code;
+end;
+/
+
+create or replace trigger updProv
+after   update of name
+	on province
+	for each row
+begin
+	update country set province=:NEW.name where province=:OLD.name and code=:NEW.country;
+	update city set province=:NEW.name where province=:OLD.name;
+	update provpops set province=:NEW.name where province=:OLD.name;
+	update citypops set province=:NEW.name where province=:OLD.name;
+	update organization set province=:NEW.name where province=:OLD.name;
+	update geo_mountain set province=:NEW.name where province=:OLD.name;
+	update geo_desert set province=:NEW.name where province=:OLD.name;
+	update geo_lake set province=:NEW.name where province=:OLD.name;
+	update geo_river set province=:NEW.name where province=:OLD.name;
+	update geo_sea set province=:NEW.name where province=:OLD.name;
+	update geo_source set province=:NEW.name where province=:OLD.name;
+	update geo_estuary set province=:NEW.name where province=:OLD.name;
+	update geo_island set province=:NEW.name where province=:OLD.name;
+	update located set province=:NEW.name where province=:OLD.name;
+	update locatedon set province=:NEW.name where province=:OLD.name;
+	update airport set province=:NEW.name where province=:OLD.name;
+end;
+/
+

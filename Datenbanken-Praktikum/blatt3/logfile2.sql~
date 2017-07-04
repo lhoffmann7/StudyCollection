@@ -1,0 +1,220 @@
+CREATE SYNONYM ss1_isMember FOR stefansiemer.isMember;
+SELECT * FROM ss1_isMember WHERE organization IN ('EU','NATO');
+UPDATE ss1_isMember SET organization='EU' WHERE organization = 'NATO';
+UPDATE ss1_isMember SET organization='NATO' WHERE organization = 'EU';
+COMMIT;
+SELECT * FROM ss1_isMember WHERE organization IN ('EU','NATO');
+
+
+
+UPDATE ss1_isMember SET organization='EU' WHERE organization = 'NATO';
+
+
+
+COMMIT;
+SELECT * FROM ss1_isMember WHERE organization IN ('EU','NATO');
+
+
+
+--logfile
+
+SQL> CREATE SYNONYM ss1_isMember FOR stefansiemer.isMember;
+
+Synonym created.
+
+SQL> SELECT * FROM ss1_isMember WHERE organization IN ('EU','NATO');
+
+COUN ORGANIZATION TYPE
+---- ------------ ------------------------------------------------------------
+AL   NATO	  member
+GR   NATO	  member
+F    NATO	  member
+E    NATO	  member
+CZ   NATO	  member
+D    NATO	  member
+H    NATO	  member
+I    NATO	  member
+SK   NATO	  member
+SLO  NATO	  member
+LV   NATO	  member
+
+COUN ORGANIZATION TYPE
+---- ------------ ------------------------------------------------------------
+LT   NATO	  member
+PL   NATO	  member
+B    NATO	  member
+L    NATO	  member
+NL   NATO	  member
+HR   NATO	  member
+BG   NATO	  member
+RO   NATO	  member
+TR   NATO	  member
+DK   NATO	  member
+EW   NATO	  member
+
+COUN ORGANIZATION TYPE
+---- ------------ ------------------------------------------------------------
+N    NATO	  member
+IS   NATO	  member
+P    NATO	  member
+GB   NATO	  member
+CDN  NATO	  member
+USA  NATO	  member
+GR   EU 	  member
+F    EU 	  member
+E    EU 	  member
+A    EU 	  member
+CZ   EU 	  member
+
+COUN ORGANIZATION TYPE
+---- ------------ ------------------------------------------------------------
+D    EU 	  member
+H    EU 	  member
+I    EU 	  member
+SK   EU 	  member
+SLO  EU 	  member
+LV   EU 	  member
+LT   EU 	  member
+PL   EU 	  member
+B    EU 	  member
+L    EU 	  member
+NL   EU 	  member
+
+COUN ORGANIZATION TYPE
+---- ------------ ------------------------------------------------------------
+HR   EU 	  member
+BG   EU 	  member
+RO   EU 	  member
+DK   EU 	  member
+EW   EU 	  member
+SF   EU 	  member
+S    EU 	  member
+IRL  EU 	  member
+M    EU 	  member
+P    EU 	  member
+GB   EU 	  member
+
+COUN ORGANIZATION TYPE
+---- ------------ ------------------------------------------------------------
+CY   EU 	  member
+MK   EU 	  candidate
+SRB  EU 	  candidate
+MNE  EU 	  candidate
+TR   EU 	  candidate
+IS   EU 	  candidate
+
+61 rows selected.
+
+SQL> UPDATE ss1_isMember SET organization='EU' WHERE organization = 'NATO';
+
+28 rows updated.
+
+SQL> UPDATE ss1_isMember SET organization='NATO' WHERE organization = 'EU';
+
+61 rows updated.
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> SELECT * FROM ss1_isMember WHERE organization IN ('EU','NATO');
+
+COUN ORGANIZATION TYPE
+---- ------------ ------------------------------------------------------------
+AL   NATO	  member
+GR   NATO	  member
+F    NATO	  member
+E    NATO	  member
+CZ   NATO	  member
+D    NATO	  member
+H    NATO	  member
+I    NATO	  member
+SK   NATO	  member
+SLO  NATO	  member
+LV   NATO	  member
+
+COUN ORGANIZATION TYPE
+---- ------------ ------------------------------------------------------------
+LT   NATO	  member
+PL   NATO	  member
+B    NATO	  member
+L    NATO	  member
+NL   NATO	  member
+HR   NATO	  member
+BG   NATO	  member
+RO   NATO	  member
+TR   NATO	  member
+DK   NATO	  member
+EW   NATO	  member
+
+COUN ORGANIZATION TYPE
+---- ------------ ------------------------------------------------------------
+N    NATO	  member
+IS   NATO	  member
+P    NATO	  member
+GB   NATO	  member
+CDN  NATO	  member
+USA  NATO	  member
+GR   NATO	  member
+F    NATO	  member
+E    NATO	  member
+A    NATO	  member
+CZ   NATO	  member
+
+COUN ORGANIZATION TYPE
+---- ------------ ------------------------------------------------------------
+D    NATO	  member
+H    NATO	  member
+I    NATO	  member
+SK   NATO	  member
+SLO  NATO	  member
+LV   NATO	  member
+LT   NATO	  member
+PL   NATO	  member
+B    NATO	  member
+L    NATO	  member
+NL   NATO	  member
+
+COUN ORGANIZATION TYPE
+---- ------------ ------------------------------------------------------------
+HR   NATO	  member
+BG   NATO	  member
+RO   NATO	  member
+DK   NATO	  member
+EW   NATO	  member
+SF   NATO	  member
+S    NATO	  member
+IRL  NATO	  member
+M    NATO	  member
+P    NATO	  member
+GB   NATO	  member
+
+COUN ORGANIZATION TYPE
+---- ------------ ------------------------------------------------------------
+CY   NATO	  member
+MK   NATO	  candidate
+SRB  NATO	  candidate
+MNE  NATO	  candidate
+TR   NATO	  candidate
+IS   NATO	  candidate
+
+61 rows selected.
+
+
+UPDATE ss1_isMember SET organization='EU' WHERE organization = 'NATO';
+0 rows updated
+
+
+
+
+
+
+
+1a - Commit von user2, das heißt nur NATO
+1b - Durch consult wieder originaltabelle und da user2 noch nicht committed hat, EU und NATO richtig angezeigt
+1c- commit von user2 überschreibt commit von user1, nur EU
+
+1b- NUR EU
+1c- dann commit sodass nur NATO 
+
+

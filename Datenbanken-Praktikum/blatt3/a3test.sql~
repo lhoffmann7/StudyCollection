@@ -1,0 +1,32 @@
+Create or replace View View1 as (
+	Select  c.code, c.population, p.infant_mortality,p.population_growth, e.gdp, e.inflation, e.gdp/c.population AS bip_kopf, c.population/c.area as BevDichte
+	FROM country c 
+	JOIN population p 
+	ON p.country = c.code 
+	JOIN economy e 
+	ON e.country = c.code );
+
+
+Select code, bip_kopf, infant_mortality, population_growth
+from View1
+Order by bip_kopf ;
+
+Select * from USER_UPDATABLE_COLUMNS
+WHERE Table_Name = 'VIEW1';
+
+Grant select, insert, delete, update
+on View1
+to lukashoffmann2;
+
+update 
+
+Update View1
+set code = 'UK'
+where code= 'GB';
+-- Great Britain fehlt dann, weil der JOIN über den code erfolgt.
+
+insert into View1 (code, population, infant_mortality, population_growth, gdp, inflation)
+
+
+
+

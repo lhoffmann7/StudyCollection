@@ -1,0 +1,3 @@
+sqlj.url=jdbc:oracle:thin:@//oracle12c.informatik.uni-goettingen.de:1521/dbis
+sqlj.user=kneuman
+sqlj.password=r31nm0uz3n

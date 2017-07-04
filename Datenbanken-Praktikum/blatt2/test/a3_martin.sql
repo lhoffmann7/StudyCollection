@@ -1,0 +1,5 @@
+create or replace view B2A3s as Select distinct c.code as country,g.sea as sea from geo_sea g, country c, encompasses e where g.country = c.code and e.country = c.code and e.continent='Europe';
+
+create or replace view B2A3n as select v.country,count(*) as num from B2A3s v group by country order by 1 asc;
+
+select * from B2A3s s1, B2A3s s2,B2A3n n1, B2A3n n2 HAVING s1.sea=s2.sea and s1.country != s2.country and n1.num = n2.num;

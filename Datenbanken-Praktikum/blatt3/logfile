@@ -1,0 +1,16 @@
+GRANT SELECT ON isMember TO lukashoffmann2;
+GRANT UPDATE ON isMember TO lukashoffmann2;
+ALTER TABLE isMember DISABLE CONSTRAINT memberkey;
+
+
+@consult 
+COMMIT;
+
+SELECT * FROM isMember WHERE organization IN ('EU','NATO');    
+UPDATE isMember SET organization='NATO' WHERE organizati
+on = 'EU';
+COMMIT;
+
+ALTER TABLE isMember ENABLE CONSTRAINT memberkey;
+REVOKE SELECT ON isMember FROM lukashoffmann2;
+REVOKE UPDATE ON isMember FROM lukashoffmann2;

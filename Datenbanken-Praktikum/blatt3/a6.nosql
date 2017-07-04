@@ -1,0 +1,110 @@
+1 
+
+SQL> select * from t1;
+
+NAME
+-----
+Lol
+
+SQL> delete from t1 where name='Lol';
+delete from t1 where name='Lol'
+*
+ERROR at line 1:
+ORA-02292: integrity constraint (LUKASHOFFMANN2.CONST) violated - child record
+found
+
+geht nicht -> child record found
+
+2 
+
+SQL> delete from t1 where name='Lol';
+
+1 row deleted.
+
+geht
+
+3
+
+Konsistenz der Datenbanken wird aufrecht erhalten.
+
+4 wie kann sich a befreien? zuerst child record loeschen (wenns geht), ansonsten arschkarte reference wegnehmen
+
+revoke references on t1 from lukashoffmann2 cascade constraints;
+
+5 
+
+QL> create table t1 (Name VARCHAR(5) primary key, asdf number, qwer number);
+
+Table created.
+
+SQL> create or replace view v as (Select name, asdf, asdf/qwer as abgeleitet from t1);
+
+View created.
+
+SQL> insert into t1 values ('asd',5,6);
+
+1 row created.
+
+SQL> insert into t1 values ('qwe',5656,99);
+
+1 row created.
+
+SQL> select * from v;
+
+NAME	    ASDF ABGELEITET
+----- ---------- ----------
+asd	       5 .833333333
+qwe	    5656 57.1313131
+
+SQL> grant select,update on v for lukashoffmann2;
+grant select,update on v for lukashoffmann2
+                         *
+ERROR at line 1:
+ORA-00905: missing keyword
+
+
+SQL> grant select,update on v to lukashoffmann2;
+
+SQL> grant select,update on v to lukashoffmann2;
+
+Grant succeeded.
+
+SQL> 
+
+
+QL> grant select,update,delete,insert on v to lukashoffmann2;
+
+Grant succeeded.
+
+direkte updates gehen (z.B. auf name, asdf, auch in originaltabelle)
+
+update abgeleiteter wert geht nicht
+
+SQL> update juu set abgeleitet = '22' where abgeleitet='1';
+update juu set abgeleitet = '22' where abgeleitet='1'
+               *
+ERROR at line 1:
+ORA-01733: virtual column not allowed here
+
+delete geht auf normalen werten 
+
+ORA-04063: view "LUKASHOFFMANN2.V" has errors
+
+
+SQL> delete from juu where asdf='6';
+
+1 row deleted.
+
+delete geht auch bei abgeleitetem wert.
+
+SQL> select * from juu;
+
+NAME	    ASDF ABGELEITET
+----- ---------- ----------
+qwe	    5656       2828
+
+SQL> delete from juu where abgeleitet='2828';
+
+1 row deleted.
+
+

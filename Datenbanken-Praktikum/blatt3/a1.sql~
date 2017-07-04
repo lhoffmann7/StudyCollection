@@ -1,0 +1,516 @@
+-- drop everthing
+
+--drop table Country_temp cascade constraints;
+--drop table City_temp cascade constraints;
+--drop table Province_temp cascade constraints;
+--drop table Economy_temp cascade constraints;
+--drop table Population_temp cascade constraints;
+--drop table Politics_temp cascade constraints;
+--drop table Language_temp cascade constraints;
+--drop table Religion_temp cascade constraints;
+--drop table EthnicGroup_temp cascade constraints;
+--drop table Countrypops_temp cascade constraints;
+--drop table Provpops_temp cascade constraints;
+--drop table Citypops_temp cascade constraints;
+--drop table Continent_temp cascade constraints;
+--drop table borders_temp cascade constraints;
+--drop table encompasses_temp cascade constraints;
+--drop table Organization_temp cascade constraints;
+--drop table isMember_temp cascade constraints;
+--drop table geo_Mountain_temp cascade constraints;
+--drop table geo_Desert_temp cascade constraints;
+--drop table geo_Lake_temp cascade constraints;
+--drop table geo_River_temp cascade constraints;
+--drop table geo_Source_temp cascade constraints;
+--drop table geo_Estuary_temp cascade constraints;
+--drop table geo_Sea_temp cascade constraints;
+--drop table geo_Island_temp cascade constraints;
+--drop table located_temp cascade constraints;
+--drop table locatedOn_temp cascade constraints;
+--drop table eu_temp cascade constraints;
+
+
+-- Dummies/Temps *************************************************************************************************************************************************************************
+
+CREATE TABLE Country_temp
+(Name VARCHAR2(50) NOT NULL UNIQUE,
+ Code VARCHAR2(4) CONSTRAINT Country_tempKey PRIMARY KEY,
+ Capital VARCHAR2(50),
+ Province VARCHAR2(50),
+ Area NUMBER CONSTRAINT Country_tempArea
+   CHECK (Area >= 0),
+ Population NUMBER CONSTRAINT Country_tempPop
+   CHECK (Population >= 0));
+
+CREATE TABLE City_temp
+(Name VARCHAR2(50),
+ Country VARCHAR2(4),
+ Province VARCHAR2(50),
+ Population NUMBER CONSTRAINT City_tempPop
+   CHECK (Population >= 0),
+ Longitude NUMBER CONSTRAINT City_tempLon
+   CHECK ((Longitude >= -180) AND (Longitude <= 180)) ,
+ Latitude NUMBER CONSTRAINT City_tempLat
+   CHECK ((Latitude >= -90) AND (Latitude <= 90)) ,
+ Elevation NUMBER ,
+ CONSTRAINT City_tempKey PRIMARY KEY (Name, Country, Province));
+
+CREATE TABLE Province_temp
+(Name VARCHAR2(50) CONSTRAINT Pr_tempName NOT NULL ,
+ Country  VARCHAR2(4) CONSTRAINT Pr_tempCountry NOT NULL ,
+ Population NUMBER CONSTRAINT Pr_tempPop
+   CHECK (Population >= 0),
+ Area NUMBER CONSTRAINT Pr_tempAr
+   CHECK (Area >= 0),
+ Capital VARCHAR2(50),
+ CapProv VARCHAR2(50),
+ CONSTRAINT Pr_tempKey PRIMARY KEY (Name, Country));
+
+CREATE TABLE Economy_temp
+(Country VARCHAR2(4) CONSTRAINT Economy_tempKey PRIMARY KEY,
+ GDP NUMBER CONSTRAINT Economy_tempGDP
+   CHECK (GDP >= 0),
+ Agriculture NUMBER,
+ Service NUMBER,
+ Industry NUMBER,
+ Inflation NUMBER,
+ Unemployment NUMBER);
+
+CREATE TABLE Population_temp
+(Country VARCHAR2(4) CONSTRAINT Pop_tempKey PRIMARY KEY,
+ Population_Growth NUMBER,
+ Infant_Mortality NUMBER);
+
+
+CREATE TABLE Politics_temp
+(Country VARCHAR2(4) CONSTRAINT Politics_tempKey PRIMARY KEY,
+ Independence DATE,
+ WasDependent VARCHAR2(50),
+ Dependent  VARCHAR2(4),
+ Government VARCHAR2(120));
+
+CREATE TABLE Language_temp
+(Country VARCHAR2(4),
+ Name VARCHAR2(50),
+ Percentage NUMBER CONSTRAINT Language_tempPercent 
+   CHECK ((Percentage > 0) AND (Percentage <= 100)),
+ CONSTRAINT Language_tempKey PRIMARY KEY (Name, Country));
+
+CREATE TABLE Religion_temp
+(Country VARCHAR2(4),
+ Name VARCHAR2(50),
+ Percentage NUMBER CONSTRAINT Religion_tempPercent 
+   CHECK ((Percentage > 0) AND (Percentage <= 100)),
+ CONSTRAINT Religion_tempKey PRIMARY KEY (Name, Country));
+
+CREATE TABLE EthnicGroup_temp
+(Country VARCHAR2(4),
+ Name VARCHAR2(50),
+ Percentage NUMBER CONSTRAINT Ethnic_tempPercent 
+   CHECK ((Percentage > 0) AND (Percentage <= 100)),
+ CONSTRAINT Ethnic_tempKey PRIMARY KEY (Name, Country));
+
+CREATE TABLE Countrypops_temp
+(Country VARCHAR2(4),
+ Year NUMBER CONSTRAINT Country_tempPopsYear
+   CHECK (Year >= 0),
+ Population NUMBER CONSTRAINT Country_tempPopsPop
+   CHECK (Population >= 0),
+ CONSTRAINT Country_tempPopsKey PRIMARY KEY (Country, Year));
+
+CREATE TABLE Provpops_temp
+(Province VARCHAR2(50),
+ Country VARCHAR2(4),
+ Year NUMBER CONSTRAINT Provpops_tempYear
+   CHECK (Year >= 0),
+ Population NUMBER CONSTRAINT Provpops_tempPop
+   CHECK (Population >= 0),
+ CONSTRAINT ProvPop_tempKey PRIMARY KEY (Country, Province, Year));
+
+CREATE TABLE Citypops_temp
+(City VARCHAR2(50),
+ Country VARCHAR2(4),
+ Province VARCHAR2(50),
+ Year NUMBER CONSTRAINT CityPops_tempYear
+   CHECK (Year >= 0),
+ Population NUMBER CONSTRAINT CityPops_tempPop
+   CHECK (Population >= 0),
+ CONSTRAINT CityPop_tempKey PRIMARY KEY (Country, Province, City, Year));
+
+CREATE TABLE Continent_temp
+(Name VARCHAR2(20) CONSTRAINT Continent_tempKey PRIMARY KEY,
+ Area NUMBER(10));
+
+
+CREATE TABLE borders_temp
+(Country1 VARCHAR2(4),
+ Country2 VARCHAR2(4),
+ Length NUMBER 
+   CHECK (Length > 0),
+ CONSTRAINT Border_tempKey PRIMARY KEY (Country1,Country2) );
+
+CREATE TABLE encompasses_temp
+(Country VARCHAR2(4) NOT NULL,
+ Continent VARCHAR2(20) NOT NULL,
+ Percentage NUMBER,
+   CHECK ((Percentage > 0) AND (Percentage <= 100)),
+ CONSTRAINT Encompasses_tempKey PRIMARY KEY (Country,Continent));
+
+CREATE TABLE Organization_temp
+(Abbreviation VARCHAR2(12) Constraint Org_tempKey PRIMARY KEY,
+ Name VARCHAR2(100) NOT NULL,
+ City VARCHAR2(50) ,
+ Country VARCHAR2(4) , 
+ Province VARCHAR2(50) ,
+ Established DATE,
+ CONSTRAINT Org_tempNameUnique UNIQUE (Name));
+
+CREATE TABLE isMember_temp
+(Country VARCHAR2(4),
+ Organization VARCHAR2(12),
+ Type VARCHAR2(60) DEFAULT 'member',
+ CONSTRAINT Member_tempKey PRIMARY KEY (Country,Organization) );
+
+CREATE TABLE geo_Mountain_temp
+(Mountain VARCHAR2(50) ,
+ Country VARCHAR2(4) ,
+ Province VARCHAR2(50) ,
+ CONSTRAINT GMountain_tempKey PRIMARY KEY (Province,Country,Mountain) );
+
+CREATE TABLE geo_Desert_temp
+(Desert VARCHAR2(50) ,
+ Country VARCHAR2(4) ,
+ Province VARCHAR2(50) ,
+ CONSTRAINT GDesert_tempKey PRIMARY KEY (Province, Country, Desert) );
+
+CREATE TABLE geo_Island_temp
+(Island VARCHAR2(50) , 
+ Country VARCHAR2(4) ,
+ Province VARCHAR2(50) ,
+ CONSTRAINT GIsland_tempKey PRIMARY KEY (Province, Country, Island) );
+
+CREATE TABLE geo_River_temp
+(River VARCHAR2(50) , 
+ Country VARCHAR2(4) ,
+ Province VARCHAR2(50) ,
+ CONSTRAINT GRiver_tempKey PRIMARY KEY (Province ,Country, River) );
+
+CREATE TABLE geo_Sea_temp
+(Sea VARCHAR2(50) ,
+ Country VARCHAR2(4)  ,
+ Province VARCHAR2(50) ,
+ CONSTRAINT GSea_tempKey PRIMARY KEY (Province, Country, Sea) );
+
+CREATE TABLE geo_Lake_temp
+(Lake VARCHAR2(50) ,
+ Country VARCHAR2(4) ,
+ Province VARCHAR2(50) ,
+ CONSTRAINT GLake_tempKey PRIMARY KEY (Province, Country, Lake) );
+
+CREATE TABLE geo_Source_temp
+(River VARCHAR2(50) ,
+ Country VARCHAR2(4) ,
+ Province VARCHAR2(50) ,
+ CONSTRAINT GSource_tempKey PRIMARY KEY (Province, Country, River) );
+
+CREATE TABLE geo_Estuary_temp
+(River VARCHAR2(50) ,
+ Country VARCHAR2(4) ,
+ Province VARCHAR2(50) ,
+ CONSTRAINT GEstuary_tempKey PRIMARY KEY (Province, Country, River) );
+
+CREATE TABLE located_temp
+(City VARCHAR2(50) ,
+ Province VARCHAR2(50) ,
+ Country VARCHAR2(4) ,
+ River VARCHAR2(50),
+ Lake VARCHAR2(50),
+ Sea VARCHAR2(50) );
+
+CREATE TABLE locatedOn_temp
+(City VARCHAR2(50) ,
+ Province VARCHAR2(50) ,
+ Country VARCHAR2(4) ,
+ Island VARCHAR2(50) ,
+ CONSTRAINT locatedOn_tempKey PRIMARY KEY (City, Province, Country, Island) );
+
+CREATE TABLE eu_temp
+(Country VARCHAR2(4)  CONSTRAINT eu_temp_key PRIMARY KEY,
+ Organization VARCHAR2(50));
+
+
+-- Temps füllen **************************************************************************************************************************************************************************
+
+-- GB tritt aus -> organization erneuern
+--delete from isMember i where i.organization = 'EU' and i.country = 'GB'; 
+
+-- Für Griechenland bleibt alles wie gehabt außer EU organization raus
+--delete from isMember i where i.organization = 'EU' and i.country = 'GR'; --(soll der wirklich raus oder als Land in der EU mit der EU_state als 2ten partner? :D)
+
+-- Alle Laender in der EU ohne Griechenland und UK mit Schweiz
+
+create or replace view euLaender as   ((select country,organization
+					from isMember 
+					where organization = 'EU' and country != 'GR' and country != 'GB')
+					union 
+			       	       (select (select code
+						from country 
+						where code = 'CH') as country, 'EU' as organization
+					from dual));
+	
+insert into eu_temp select * from eulaender;
+
+-- [Country] erweitern um EU 
+
+insert into Country_temp values ('Europe','EU', (select city from organization where abbreviation = 'EU'), (select province from organization where abbreviation = 'EU'), (select sum(c.area) from country c, euLaender eu where c.code = eu.country), (select sum(c.population) from country c, euLaender eu where c.code = eu.country));
+
+-- [Provincen] EU Länder als provincen einfügen .... Sachsen und Bayern als Provincen einfügen
+
+insert into Province_temp select c.name as name, 'EU' as country, c.area as area, c.population as population, c.capital as capital, c.province as capprov from country c,euLaender eu where c.code = eu.country; 
+
+insert into Province_temp select c.name as name, 'EU' as country, c.area as area, c.population as population, c.capital as capital, c.capprov as capprov from province c where c.name = 'Bayern';
+
+insert into Province_temp select c.name as name, 'EU' as country, c.area as area, c.population as population, c.capital as capital, c.capprov as capprov from province c where c.name = 'Sachsen';
+
+-- [city] alle city die in eu ländern vorkommen mit neuen daten in temp klatschen
+
+insert into City_temp select c.name as name, 'EU' as Country, c.province as province, c.population as population, c.elevation as elevation, c.longitude as longitude, c.latitude as latitude from city c, euLaender eu where c.country = eu.country and (c.province = 'Bayern' or c.province = 'Sachsen');
+
+insert into City_temp select c.name as name, 'EU' as Country, eu.country as province, c.population as population, c.elevation as elevation, c.longitude as longitude, c.latitude as latitude from city c, euLaender eu where c.country = eu.country and c.province != 'Bayern' and c.province != 'Sachsen';
+
+-- [ismember] eu wo mehrheit der alten länder mitglied war reinballern
+
+insert into isMember_temp select 'EU' as country, i.organization as organization, 'member' as type from isMember i,eulaender eu where i.country = eu.country group by i.organization having count(*)>16;
+
+-- [organization] neue einfügen mehrheit der alten mitgliedstaaten -> rein 
+
+insert into Organization_temp select o.abbreviation as abbreviation, o.name as name, o.city as city, 'EU' as country, c.name as province, o.established as established from Organization o, euLaender eu, country c where o.country = eu.country and eu.country = c.code; 
+
+-- [citypops] update (historische daten mit anderne ländern drinlassen? ... braucht dann aber eintrag in country -> vermutlich raus)
+
+insert into Citypops_temp select cp.city as city, 'EU' as country, cp.province as province, cp.year as year, cp.population as population from Citypops cp, euLaender eu, country c where cp.country = eu.country and eu.country = c.code and (cp.province = 'Bayern' or cp.province = 'Sachsen');
+
+insert into Citypops_temp select cp.city as city, 'EU' as country, c.name as province, cp.year as year, cp.population as population from Citypops cp, euLaender eu, country c where cp.country = eu.country and eu.country = c.code and cp.province != 'Bayern' and cp.province != 'Sachsen';
+
+-- [borders] 1. innerer grenzen raus EUgrenzen mit nachbarstaaten rein 
+
+insert into Borders_temp select 'EU' as country1, sym.country2 as country2, sum(sym.length) from symbord sym, euLaender eu where sym.country1 = eu.country and not exists (select * from euLaender eu where eu.country = sym.country2) group by sym.country2;
+
+-- [countrypops] um tupel für eu erweitern (aufsummieren) (alter länder drinlassen? historische daten etc... braucht dann aber eintrag davon in country -> vermutlich raus!)
+
+insert into countrypops_temp select 'EU' as country, '2015' as year, sum(c.population) from country c,euLaender eu where c.code = eu.country;
+
+-- [economy] mean über alle euländer bilden (alte raus)
+
+create or replace view eu_agri_total as(select eu.country as country, e.gdp*(e.agriculture/100) as agri_total from economy e, eulaender eu where e.country = eu.country and e.agriculture is not null);
+create or replace view eu_serv_total as(select eu.country as country, e.gdp*(e.service/100) as serv_total from economy e, eulaender eu where e.country = eu.country and e.service is not null);
+create or replace view eu_indu_total as(select eu.country as country, e.gdp*(e.industry/100) as indu_total from economy e, eulaender eu where e.country = eu.country and e.industry is not null);
+create or replace view eu_unemploy_total as(select eu.country as country, c.population*(e.unemployment/100) as unemploy_total from economy e, eulaender eu, country c where e.country = eu.country and e.country = c.code);
+
+insert into economy_temp values ('EU', (select sum(e.gdp) as gdp from economy e, eulaender eu where e.country = eu.country and e.gdp is not NULL), (select sum(eu.agri_total)/sum(e.gdp)*100 as eu_agri_avg from economy e, eu_agri_total eu where eu.country = e.country), (select sum(eu.serv_total)/sum(e.gdp)*100 as eu_serv_avg from economy e, eu_serv_total eu where eu.country = e.country), (select sum(eu.indu_total)/sum(e.gdp)*100 as eu_indu_avg from economy e, eu_indu_total eu where eu.country = e.country), (select avg(e.inflation) from economy e, eulaender eu where eu.country = e.country), (select sum(eu.unemploy_total)/sum(c.population)*100 from eu_unemploy_total eu, country c where eu.country = c.code));
+
+-- [politics] abhängigkeiten gehen verloren duch country verlust eu einfügen mit goverment = deutschland.goverment
+
+insert into politics_temp values ('EU',NUll ,NULL ,NULL ,(select government from politics where country = 'D'));
+
+-- [population] mean über alle euländer
+
+create or replace view eu_growth_total as(select eu.country as country, c.population*(p.population_growth/100) as growth_total from eulaender eu, country c, population p where eu.country = c.code and eu.country = p.country and p.population_growth is not null);
+
+insert into population_temp values ('EU', (select sum(eu.growth_total)/sum(c.population)*100 from eu_growth_total eu, country c where c.code = eu.country), (select avg(p.infant_mortality) from population p,eulaender eu where p.country = eu.country and p.infant_mortality is not null));
+
+ 
+-- [provpops] update selbe wie bei country und citypops
+
+create or replace view prov_sax_bav as (select sum(p.population) as population from provpops p where p.year = '2011' and (p.province = 'Bayern' or p.province = 'Sachsen'));
+
+insert into provpops_temp select c.name as province, 'EU' as country, '2015' as year, c.population as population from country c, eulaender eu where c.code = eu.country and eu.country != 'D';
+
+insert into provpops_temp select c.name as province, 'EU' as country, '2015' as year, (c.population-(select * from prov_sax_bav)) as population from country c, eulaender eu where c.code = eu.country and eu.country = 'D';
+
+insert into provpops_temp select * from provpops where province = 'Bayern' or province = 'Sachsen';
+
+-- [encompasses] alte länder raus eu rein und percentage durch aufsummieren euländer anpassen
+
+create or replace view turky_area as (select c.code as country, (c.area*(e.percentage/100)) as area, e.continent as continent from country c,encompasses e where c.code = e.country and c.code = 'TR');
+
+insert into encompasses_temp values ('EU', 'Europe', (select 	((Select sum(c.area) as area from country c, eulaender eu where eu.country = c.code)-(select ta.area as area from turky_area ta where ta.continent = 'Asia'))/(Select sum(c.area) as area from country c, eulaender eu where eu.country = c.code) as percentage from dual));
+
+insert into encompasses_temp values ('EU', 'Asia', (select 	((select ta.area as area from turky_area ta where ta.continent = 'Asia'))/(Select sum(c.area) as area from country c, eulaender eu where eu.country = c.code) as percentage from dual));
+
+
+-- [language] country alle eu länder durch eu ersetzen percentage alle sprachen an eu größe anpassen
+
+create or replace view eu_country_language_total as (select c.code as country, l.name as name, c.population*(l.percentage/100) as language_total from language l, eulaender eu, country c where eu.country = l.country and eu.country = c.code);
+
+create or replace view eu_lang_total as (select eu.name as name , sum(eu.language_total) as language_total from eu_country_language_total eu group by eu.name);
+
+insert into language_temp select 'EU' as country, eu.name as name, (eu.language_total/(select sum(c.population) from country c,eulaender eu where eu.country = c.code)*100) as percentage from eu_lang_total eu;
+
+-- [religion] country alle eu länder durch eu ersetzen percentage alle religionen an eu größe anpassen
+
+create or replace view eu_country_religion_total as (select c.code as country, l.name as name, c.population*(l.percentage/100) as religion_total from religion l, eulaender eu, country c where eu.country = l.country and eu.country = c.code);
+
+create or replace view eu_religion_total as (select eu.name as name , sum(eu.religion_total) as religion_total from eu_country_religion_total eu group by eu.name);
+
+insert into religion_temp select 'EU' as country, eu.name as name, (eu.religion_total/(select sum(c.population) from country c,eulaender eu where eu.country = c.code)*100) as percentage from eu_religion_total eu;
+
+-- [ethnic group] country alle eu länder durch eu ersetzen percentage alle ethnicgroups an eu größe anpassen
+
+create or replace view eu_country_ethnic_total as (select c.code as country, l.name as name, c.population*(l.percentage/100) as ethnic_total from ethnicgroup l, eulaender eu, country c where eu.country = l.country and eu.country = c.code);
+
+create or replace view eu_ethnic_total as (select eu.name as name , sum(eu.ethnic_total) as ethnic_total from eu_country_ethnic_total eu group by eu.name);
+
+insert into ethnicgroup_temp select 'EU' as country, eu.name as name, (eu.ethnic_total/(select sum(c.population) from country c,eulaender eu where eu.country = c.code)*100) as percentage from eu_ethnic_total eu;
+
+-- [geo_lake] an neue bedingungen anpassen alle in altern ländern/provincen jetzt in eu/ländern
+
+insert into geo_lake_temp select distinct gl.lake as lake, 'EU' as country, gl.province as province from geo_lake gl, eulaender eu, country c where eu.country = gl.country and c.code = eu.country and (gl.province = 'Bayern' or gl.province = 'Sachsen');
+
+insert into geo_lake_temp select distinct gl.lake as lake, 'EU' as country, c.name as province from geo_lake gl, eulaender eu, country c where eu.country = gl.country and c.code = eu.country and gl.province != 'Bayern' and gl.province != 'Sachsen';
+
+-- [geo_river] an neue bedingungen anpassen alle in altern ländern/provincen jetzt in eu/ländern
+
+insert into geo_river_temp select distinct gl.river as river, 'EU' as country, gl.province as province from geo_river gl, eulaender eu, country c where eu.country = gl.country and c.code = eu.country and (gl.province = 'Bayern' or gl.province = 'Sachsen');
+
+insert into geo_river_temp select distinct gl.river as river, 'EU' as country, c.name as province from geo_river gl, eulaender eu, country c where eu.country = gl.country and c.code = eu.country and gl.province != 'Bayern' and gl.province != 'Sachsen';
+
+-- [geo_source] an neue bedingungen anpassen alle in altern ländern/provincen jetzt in eu/ländern
+
+insert into geo_source_temp select distinct gl.river as river, 'EU' as country, gl.province as province from geo_source gl, eulaender eu, country c where eu.country = gl.country and c.code = eu.country and (gl.province = 'Bayern' or gl.province = 'Sachsen');
+
+insert into geo_source_temp select distinct gl.river as river, 'EU' as country, c.name as province from geo_source gl, eulaender eu, country c where eu.country = gl.country and c.code = eu.country and gl.province != 'Bayern' and gl.province != 'Sachsen';
+
+-- [geo_estuary] an neue bedingungen anpassen alle in altern ländern/provincen jetzt in eu/ländern
+
+insert into geo_estuary_temp select distinct gl.river as river, 'EU' as country, gl.province as province from geo_estuary gl, eulaender eu, country c where eu.country = gl.country and c.code = eu.country and (gl.province = 'Bayern' or gl.province = 'Sachsen');
+
+insert into geo_estuary_temp select distinct gl.river as river, 'EU' as country, c.name as province from geo_estuary gl, eulaender eu, country c where eu.country = gl.country and c.code = eu.country and gl.province != 'Bayern' and gl.province != 'Sachsen';
+
+-- [geo_sea] an neue bedingungen anpassen alle in altern ländern/provincen jetzt in eu/ländern
+
+insert into geo_sea_temp select distinct gl.sea as sea, 'EU' as country, gl.province as province from geo_sea gl, eulaender eu, country c where eu.country = gl.country and c.code = eu.country and (gl.province = 'Bayern' or gl.province = 'Sachsen');
+
+insert into geo_sea_temp select distinct gl.sea as sea, 'EU' as country, c.name as province from geo_sea gl, eulaender eu, country c where eu.country = gl.country and c.code = eu.country and gl.province != 'Bayern' and gl.province != 'Sachsen';
+
+-- [geo_island] an neue bedingungen anpassen alle in altern ländern/provincen jetzt in eu/ländern
+
+insert into geo_island_temp select distinct gl.island as island, 'EU' as country, gl.province as province from geo_island gl, eulaender eu, country c where eu.country = gl.country and c.code = eu.country and (gl.province = 'Bayern' or gl.province = 'Sachsen');
+
+insert into geo_island_temp select distinct gl.island as island, 'EU' as country, c.name as province from geo_island gl, eulaender eu, country c where eu.country = gl.country and c.code = eu.country and gl.province != 'Bayern' and gl.province != 'Sachsen';
+
+-- [located] anpassen städte mit euländer/alteprovincen zu städte/eu/euländer
+
+insert into located_temp select distinct l.city as city, l.province as province, 'EU' as country, l.river as river, l.lake as lake, l.sea as sea from located l, eulaender eu, country c where l.country = eu.country and c.code = eu.country and (l.province = 'Bayern' or l.province = 'Sachsen');
+
+insert into located_temp select distinct l.city as city, c.name as province, 'EU' as country, l.river as river, l.lake as lake, l.sea as sea from located l, eulaender eu, country c where l.country = eu.country and c.code = eu.country and l.province != 'Bayern' and l.province != 'Sachsen';
+
+-- [locatedOn] selbe wie bei located
+
+insert into locatedon_temp select distinct l.city as city, l.province as province, 'EU' as country, l.island as island from locatedon l, eulaender eu, country c where l.country = eu.country and c.code = eu.country and (l.province = 'Bayern' or l.province = 'Sachsen');
+
+insert into locatedon_temp select distinct l.city as city, c.name as province, 'EU' as country, l.island as island from locatedon l, eulaender eu, country c where l.country = eu.country and c.code = eu.country and l.province != 'Bayern' and l.province != 'Sachsen';
+
+-- [geo_mountain] an neue bedingungen anpassen alle in altern ländern/provincen jetzt in eu/ländern
+
+insert into geo_mountain_temp select distinct gl.mountain as mountain, 'EU' as country, gl.province as province from geo_mountain gl, eulaender eu, country c where eu.country = gl.country and c.code = eu.country and (gl.province = 'Bayern' or gl.province = 'Sachsen');
+
+insert into geo_mountain_temp select distinct gl.mountain as mountain, 'EU' as country, c.name as province from geo_mountain gl, eulaender eu, country c where eu.country = gl.country and c.code = eu.country and gl.province != 'Bayern' and gl.province != 'Sachsen';
+
+
+-- [geo_desert] an neue bedingungen anpassen alle in altern ländern/provincen jetzt in eu/ländern
+
+insert into geo_desert_temp select distinct gl.desert as desert, 'EU' as country, gl.province as province from geo_desert gl, eulaender eu, country c where eu.country = gl.country and c.code = eu.country and (gl.province = 'Bayern' or gl.province = 'Sachsen');
+
+insert into geo_desert_temp select distinct gl.desert as desert, 'EU' as country, c.name as province from geo_desert gl, eulaender eu, country c where eu.country = gl.country and c.code = eu.country and gl.province != 'Bayern' and gl.province != 'Sachsen';
+
+-- Alte daten löschen ********************************************************************************************************************************************************************
+
+delete from organization where organization.abbreviation = 'EU';
+delete from organization where exists (select * from eu_temp eu where organization.country = eu.country);
+delete from isMember where exists (select * from eu_temp eu where isMember.country = eu.country);
+delete from country where exists (select * from eu_temp eu where country.code = eu.country);
+delete from borders where exists (select * from eu_temp eu where borders.country1 = eu.country or borders.country2 = eu.country);
+delete from countrypops where exists (select * from eu_temp eu where countrypops.country = eu.country);
+delete from economy where exists (select * from eu_temp eu where economy.country = eu.country);
+delete from politics where exists (select * from eu_temp eu where politics.country = eu.country);
+delete from population where exists (select * from eu_temp eu where population.country = eu.country);
+delete from city where exists (select * from eu_temp eu where city.country = eu.country);
+delete from citypops where exists (select * from eu_temp eu where citypops.country = eu.country);
+delete from province where exists (select * from eu_temp eu where province.country = eu.country);
+delete from provpops where exists (select * from eu_temp eu where provpops.country = eu.country);
+delete from encompasses where exists (select * from eu_temp eu where encompasses.country = eu.country);
+delete from language where exists (select * from eu_temp eu where language.country = eu.country);
+delete from religion where exists (select * from eu_temp eu where religion.country = eu.country);
+delete from ethnicgroup where exists (select * from eu_temp eu where ethnicgroup.country = eu.country);
+delete from geo_lake where exists (select * from eu_temp eu where geo_lake.country = eu.country);
+delete from geo_river where exists (select * from eu_temp eu where geo_river.country = eu.country);
+delete from geo_source where exists (select * from eu_temp eu where geo_source.country = eu.country);
+delete from geo_estuary where exists (select * from eu_temp eu where geo_estuary.country = eu.country);
+delete from geo_sea where exists (select * from eu_temp eu where geo_sea.country = eu.country);
+delete from geo_island where exists (select * from eu_temp eu where geo_island.country = eu.country);
+delete from geo_mountain where exists (select * from eu_temp eu where geo_mountain.country = eu.country);
+delete from geo_desert where exists (select * from eu_temp eu where geo_desert.country = eu.country);
+delete from located where exists (select * from eu_temp eu where located.country = eu.country);
+delete from locatedon where exists (select * from eu_temp eu where locatedon.country = eu.country);
+
+
+-- Temps in richtige tabellen einfügen ***************************************************************************************************************************************************
+
+insert into organization select * from organization_temp;
+insert into country select * from country_temp;
+insert into ismember select * from ismember_temp;
+insert into borders select * from borders_temp;
+insert into countrypops select * from countrypops_temp;
+insert into economy select * from economy_temp;
+insert into politics select * from politics_temp;
+insert into population select * from population_temp;
+insert into city select * from city_temp;
+insert into citypops select * from citypops_temp;
+insert into province select * from province_temp;
+insert into provpops select * from provpops_temp;
+insert into encompasses select * from encompasses_temp;
+insert into language select * from language_temp;
+insert into religion select * from religion_temp;
+insert into ethnicgroup select * from ethnicgroup_temp;
+insert into geo_river select * from geo_river_temp;
+insert into geo_source select * from geo_source_temp;
+insert into geo_estuary select * from geo_estuary_temp;
+insert into geo_lake select * from geo_lake_temp;
+insert into geo_sea select * from geo_sea_temp;
+insert into geo_mountain select * from geo_mountain_temp;
+insert into geo_desert select * from geo_desert_temp;
+insert into geo_island select * from geo_island_temp;
+insert into located select * from located_temp;
+insert into locatedon select * from locatedon_temp;
+
+-- Temps löschen *************************************************************************************************************************************************************************
+
+drop table Country_temp cascade constraints;
+drop table City_temp cascade constraints;
+drop table Province_temp cascade constraints;
+drop table Economy_temp cascade constraints;
+drop table Population_temp cascade constraints;
+drop table Politics_temp cascade constraints;
+drop table Language_temp cascade constraints;
+drop table Religion_temp cascade constraints;
+drop table EthnicGroup_temp cascade constraints;
+drop table Countrypops_temp cascade constraints;
+drop table Provpops_temp cascade constraints;
+drop table Citypops_temp cascade constraints;
+drop table Continent_temp cascade constraints;
+drop table borders_temp cascade constraints;
+drop table encompasses_temp cascade constraints;
+drop table Organization_temp cascade constraints;
+drop table isMember_temp cascade constraints;
+drop table geo_Mountain_temp cascade constraints;
+drop table geo_Desert_temp cascade constraints;
+drop table geo_Lake_temp cascade constraints;
+drop table geo_River_temp cascade constraints;
+drop table geo_Source_temp cascade constraints;
+drop table geo_Estuary_temp cascade constraints;
+drop table geo_Sea_temp cascade constraints;
+drop table geo_Island_temp cascade constraints;
+drop table located_temp cascade constraints;
+drop table locatedOn_temp cascade constraints;
+

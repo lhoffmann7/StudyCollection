@@ -1,0 +1,38 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import oracle.sqlj.runtime.Oracle;
+import sqlj.runtime.ref.DefaultContext;
+
+public class SQLJ {
+
+	public static void main(String args[]) {
+		
+		try {
+			//DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			
+			//DefaultContext ctx = new DefaultContext(con);
+			//DefaultContext.setDefaultContext(ctx);
+			Oracle.connect(SQLJ.class,"sqlj.props");
+			
+			int halfBIP;
+			int addBIP=0;
+			#sql {select sum(gdp)/2 into :halfBIP from economy};
+			#sql iterator Iter (int gdp,String country);
+			Iter iter;
+			#sql iter = {select gdp as gdp,country  from economy, country  where code=country and gdp is not null order by gdp/population desc};
+			while (iter.next()){
+				if (addBIP+iter.gdp() > halfBIP){
+					double percentage = (double)(halfBIP-addBIP)/iter.gdp();
+					System.out.println(iter.country() + " " + percentage);
+					break;
+				}
+				addBIP = addBIP + iter.gdp();
+                System.out.println(iter.country() + " 1");
+				
+			}
+		} catch (SQLException e) {
+
+		}
+	}
+}

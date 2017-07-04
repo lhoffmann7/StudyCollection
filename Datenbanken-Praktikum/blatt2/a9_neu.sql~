@@ -1,0 +1,3 @@
+select e.country, sum(c.area)/(select sum(country.area) from country,encompasses where country.code = encompasses.country and encompasses.continent = 'Africa')*100 as coloniePer from encompasses e, politics p, encompasses e2, country c where e.continent = 'Europe' and e2.continent = 'Africa' and p.country = e2.country and p.country = c.code start with p.wasdependent = e.country connect by p.dependent = p.wasdependent group by e.country;
+
+select e.country, sum(c.area) as colonieAbs from encompasses e, politics p, encompasses e2, country c where e.continent = 'Europe' and e2.continent = 'Africa' and p.country = e2.country and p.country = c.code start with p.wasdependent = e.country connect by p.dependent = p.wasdependent group by e.country;
